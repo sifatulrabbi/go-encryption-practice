@@ -88,7 +88,7 @@ func decrypt(name string, msg string) {
 
 	privateKey := importPrivateKey(name)
 	bytes, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, decoded)
-	failOnError(err, "unable to decrypt the msg\nplease make sure you're using the right name\ncurrent name: "+name)
+	failOnError(err, "Invalid key")
 	fmt.Println(string(bytes))
 }
 
@@ -155,9 +155,8 @@ func importPublicKey(name string) *rsa.PublicKey {
 	return publicKey
 }
 
-func failOnError(err error, msg string, rest ...string) {
+func failOnError(err error, msg string, rest ...interface{}) {
 	if err != nil {
-		fmsg := fmt.Sprintf(msg, rest)
-		log.Panicf("%s | error: %s", fmsg, err)
+		log.Fatalf("%s\nerror: %s", fmt.Sprintf(msg, rest...), err)
 	}
 }
